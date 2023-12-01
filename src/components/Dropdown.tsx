@@ -45,8 +45,8 @@ export default function Dropdown({countries, setGuesses, guesses, answer, setSta
     }
 
     function updateState(e: string) {
+        setGuesses([getCountryFromCCA(e), ...guesses]);
         if (guesses.length < 4) {
-            setGuesses([getCountryFromCCA(e), ...guesses]);
             checkAnswer(answer, e);
         } else {
             setStatus(GUESSWRONG);
