@@ -2,16 +2,19 @@
 
 import Select from 'react-select';
 import Country from './Countries';
+import { GUESSRIGHT, GUESSWRONG } from './Constants';
 
 interface Props {
     countries: Country[];
     setGuesses: (arg0: Country[]) => void;
     guesses: Country[];
     answer: Country;
-    setStatus: (arg0: string) => void;
+    setStatus: (arg0: number) => void;
+    setOpenModal: (arg0: boolean) => void;
 }
 
-export default function Dropdown({countries, setGuesses, guesses, answer, setStatus}: Props) {
+export default function Dropdown({countries, setGuesses, guesses, answer, setStatus, setOpenModal}: Props) {
+
     function getCountryFromCCA(cca: string) {
         const country = countries.find((c) => c.cca2 === cca)
         if (country) {
@@ -23,7 +26,8 @@ export default function Dropdown({countries, setGuesses, guesses, answer, setSta
 
     function checkAnswer(answer: Country, guess: string) {
         if (answer.cca2 === guess) {
-            setStatus("finished");
+            setStatus(GUESSRIGHT);
+            setOpenModal(true);
         }
     }
     
@@ -41,17 +45,23 @@ export default function Dropdown({countries, setGuesses, guesses, answer, setSta
     }
 
     function updateState(e: string) {
-        if (guesses.length < 5 ) {
+        if (guesses.length < 4) {
             setGuesses([getCountryFromCCA(e), ...guesses]);
+            checkAnswer(answer, e);
+        } else {
+            setStatus(GUESSWRONG);
+            setOpenModal(true);
         }
-        checkAnswer(answer, e);
     }
 
     return (
+        <div className="items-center justify-center m-8">
         <Select
             options={setOptions()}
             onChange={
                 (e) => {(e) ? updateState(e.value) : null}
             }
-        />)
+        />
+        </div>
+    )
 }
