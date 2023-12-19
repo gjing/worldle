@@ -25,7 +25,6 @@ export default function Guesses ({countries, answer}: Props) {
         } else {
             return ((answer === country) ? right : wrong)
         }
-        return itemClass;
     }
 
     function checkNumber(answer: number, country: number) {

@@ -1,13 +1,14 @@
 import seedrandom from 'seedrandom';
 import data from './assets/countries.json'
 import Guesses from './components/Guesses';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Dropdown from './components/Dropdown';
 import Country from './components/Countries';
 import ResultsModal from './components/Results';
 import { GUESSING } from './components/Constants';
 
 function App() {
+  const didMount = useRef(false);
   const date = new Date();
   const day = date.getDate();
   const month = date.getMonth();
@@ -16,11 +17,25 @@ function App() {
   const gen = seedrandom(seed);
   const rand = Math.round(gen() * data.length);
   const answer = data[rand]
-  console.log(answer);
 
-  const [guesses, setGuesses] = useState<Country[]>([]);
+  let g = localStorage.getItem(seed);
+  if (g === null) {
+    g = '[]';
+  }
+
+  const [guesses, setGuesses] = useState<Country[]>(JSON.parse(g));
   const [status, setStatus] = useState(GUESSING);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(guesses.length > 4);
+
+  useEffect(() => {
+    console.log(guesses);
+    console.log(didMount.current);
+    if ( !didMount.current ) {
+      didMount.current = true;
+      return;
+    }
+    localStorage.setItem(seed, JSON.stringify(guesses))
+  }, [guesses, seed])
 
   return (
     <div>
